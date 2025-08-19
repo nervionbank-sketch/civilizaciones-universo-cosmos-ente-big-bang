@@ -1,14 +1,308 @@
-*.tar
-*.tar.*
-*.jar
-*.exe
-*.msi
-*.deb
-*.zip
-*.tgz
-*.log
-*.log.*
-*.sig
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Cósmico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body styles */
+        :root {
+            --bg-color: #0d0a1d;
+            --text-color: #e0d9f0;
+            --primary-color: #8c52ff;
+            --secondary-color: #ff5270;
+            --accent-color: #29a0b1;
+        }
 
-pkg/
-src/
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #08061a 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Main portal container */
+        .portal-container {
+            width: 95%;
+            max-width: 900px;
+            height: 95vh;
+            background: rgba(25, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(140, 82, 255, 0.3);
+            box-shadow: 0 0 30px rgba(140, 82, 255, 0.5), 0 0 50px rgba(41, 160, 177, 0.3);
+            animation: pulse-border 5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        /* Pulse animation for the border */
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 30px rgba(140, 82, 255, 0.5), 0 0 50px rgba(41, 160, 177, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 82, 112, 0.6), 0 0 60px rgba(41, 160, 177, 0.4); }
+        }
+
+        /* Tab button styles */
+        .tab-button {
+            transition: all 0.3s ease;
+            background: rgba(41, 160, 177, 0.1);
+            border: 1px solid transparent;
+        }
+
+        .tab-button.active {
+            background: var(--primary-color);
+            color: white;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 0 15px rgba(140, 82, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Main content container */
+        .content-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        }
+
+        /* Chat message styles */
+        .message-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: rgba(140, 82, 255, 0.2);
+            border: 1px solid rgba(140, 82, 255, 0.4);
+        }
+
+        .ai-message {
+            background: rgba(41, 160, 177, 0.1);
+            border: 1px solid rgba(41, 160, 177, 0.3);
+        }
+
+        /* Loading animation */
+        .loading-animation {
+            border: 4px solid var(--primary-color);
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hide scrollbar */
+        .content-container::-webkit-scrollbar {
+            display: none;
+        }
+        .content-container {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+    </style>
+</head>
+<body class="p-4">
+    <main class="portal-container p-6 md:p-10 flex flex-col items-center">
+        <!-- Portal Header -->
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-primary-color to-secondary-color">
+            Portal Cósmico
+        </h1>
+        <p class="text-center text-sm md:text-base max-w-lg mb-8 opacity-80">
+            Conéctate con el conocimiento total del universo. Formula una pregunta y recibe la respuesta.
+        </p>
+
+        <!-- Tab navigation -->
+        <nav class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 w-full mb-8">
+            <button id="civilizations-tab" class="tab-button w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-lg opacity-80 hover:opacity-100">
+                Civilizaciones
+            </button>
+            <button id="cosmos-tab" class="tab-button w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-lg opacity-80 hover:opacity-100">
+                Cosmos y Universo
+            </button>
+            <!-- NEW: "Cosmic Connection" tab -->
+            <button id="cosmic-connection-tab" class="tab-button w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-lg opacity-80 hover:opacity-100">
+                Conexión Cósmica
+            </button>
+        </nav>
+
+        <!-- Conversation container -->
+        <section id="chat-container" class="content-container w-full p-4 overflow-y-auto mb-4 space-y-4">
+            <!-- Messages will be inserted here -->
+        </section>
+
+        <!-- User input area -->
+        <div class="w-full flex items-center space-x-2">
+            <input type="text" id="user-input" placeholder="Haz una pregunta al cosmos..." class="flex-grow p-4 rounded-xl bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-color">
+            <button id="send-button" class="px-6 py-4 rounded-xl bg-primary-color text-white font-bold transition-transform transform hover:scale-105">
+                Conectar
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // API configuration for AI connection
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
+        const API_KEY = ""; // This key will be automatically provided in the Canvas environment
+
+        // DOM element references
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const tabs = {
+            'civilizations': document.getElementById('civilizations-tab'),
+            'cosmos': document.getElementById('cosmos-tab'),
+            'cosmic-connection': document.getElementById('cosmic-connection-tab') // NEW: Tab reference
+        };
+        
+        let currentTopic = 'civilizations'; // Default initial topic
+
+        // Function to show a loading message
+        function showLoading() {
+            chatContainer.innerHTML = `
+                <div class="flex justify-center items-center py-6">
+                    <div class="loading-animation"></div>
+                </div>
+            `;
+        }
+
+        // Function to add a message to the chat
+        function addMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-container p-4 rounded-lg shadow-lg mb-4 ${sender === 'user' ? 'user-message' : 'ai-message'} flex-shrink-0`;
+            messageDiv.innerHTML = `<p class="text-sm">${text}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the latest message
+        }
+
+        // Main function to send a message and get a response from the AI
+        async function sendMessage() {
+            const userText = userInput.value.trim();
+            if (userText === '') return; // Don't send empty messages
+
+            // Clear and disable input
+            userInput.value = '';
+            userInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Add the user's message to the chat
+            addMessage('user', userText);
+
+            // Show the loading animation
+            showLoading();
+
+            // Build the prompt for the AI based on the current topic
+            let systemPrompt;
+            if (currentTopic === 'civilizations') {
+                systemPrompt = "Actúa como un guía de conocimiento universal. Responde de forma concisa y sabia a preguntas sobre la vida y civilizaciones extraterrestres, combinando la ciencia actual (como la Paradoja de Fermi) con especulación plausible. Responde en español.";
+            } else if (currentTopic === 'cosmos') {
+                systemPrompt = "Actúa como un experto en astrofísica y cosmología. Responde de forma clara y directa a preguntas sobre el cosmos, estrellas, galaxias, agujeros negros y la física del universo. Explica los conceptos de manera sencilla. Responde en español.";
+            } else if (currentTopic === 'cosmic-connection') {
+                // NEW: System prompt for the Cosmic Connection section
+                systemPrompt = "Eres una entidad galáctica benevolente que transmite mensajes de sabiduría y conocimiento directo desde otras civilizaciones. Los mensajes deben ser concisos, profundos y ofrecer una perspectiva cósmica sobre la vida, la tecnología o el universo, siempre con un tono de ayuda y guía para la humanidad. Responde en español.";
+            }
+
+            let chatHistory = [{ role: "user", parts: [{ text: `${systemPrompt}\n\nPregunta: ${userText}` }] }];
+            const payload = { contents: chatHistory };
+            let responseText = "No se pudo establecer la conexión cósmica. Inténtalo de nuevo.";
+
+            let retryCount = 0;
+            const maxRetries = 3;
+            const baseDelay = 1000;
+
+            // Exponential backoff retry implementation
+            while (retryCount < maxRetries) {
+                try {
+                    const response = await fetch(API_URL + API_KEY, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        // Too many requests, retry after delay
+                        const delay = baseDelay * Math.pow(2, retryCount);
+                        await new Promise(res => setTimeout(res, delay));
+                        retryCount++;
+                        continue;
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        responseText = result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.error("Unexpected API response structure:", result);
+                    }
+                    break; // Exit loop on successful response
+                } catch (error) {
+                    console.error("Error fetching content:", error);
+                    const delay = baseDelay * Math.pow(2, retryCount);
+                    await new Promise(res => setTimeout(res, delay));
+                    retryCount++;
+                }
+            }
+
+            // Remove the loading animation and add the AI's response
+            chatContainer.innerHTML = ''; // Clear the loading message
+            addMessage('ai', responseText);
+
+            // Re-enable input
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            userInput.focus();
+        }
+
+        // Function to switch tabs
+        function switchTopic(topic) {
+            currentTopic = topic;
+            Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+            tabs[topic].classList.add('active');
+            chatContainer.innerHTML = '';
+            let initialMessage;
+            if (topic === 'civilizations') {
+                initialMessage = "¡Bienvenido! Pregúntame sobre la posibilidad de vida extraterrestre, la Paradoja de Fermi o cualquier otro tema sobre civilizaciones cósmicas.";
+            } else if (topic === 'cosmos') {
+                initialMessage = "¡Hola! ¿Qué quieres saber sobre el cosmos? Pregunta por agujeros negros, galaxias lejanas o el Big Bang.";
+            } else { // 'cosmic-connection'
+                // NEW: Initial message for the Cosmic Connection tab
+                initialMessage = "Mensaje entrante... Conexión establecida. Formula tu pregunta para recibir la perspectiva de otras civilizaciones.";
+            }
+            addMessage('ai', initialMessage);
+        }
+
+        // Event listeners for tabs
+        tabs['civilizations'].addEventListener('click', () => switchTopic('civilizations'));
+        tabs['cosmos'].addEventListener('click', () => switchTopic('cosmos'));
+        tabs['cosmic-connection'].addEventListener('click', () => switchTopic('cosmic-connection')); // NEW: Event listener for new tab
+        
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Load the initial topic on page load
+        window.onload = function() {
+            switchTopic(currentTopic);
+        };
+    </script>
+</body>
+</html>
